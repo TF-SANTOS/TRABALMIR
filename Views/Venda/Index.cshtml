@@ -1,0 +1,96 @@
+﻿@model List<PivotDataViewModel>
+
+<h1 class="mt-4">Vendas</h1>
+
+<button id="gerarDadosBtn" class="btn btn-primary mb-4">Gerar Dados</button>
+
+<div id="tabelaDados" class="table-responsive" style="display:none;">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Produtos</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Data.ToShortDateString()</td>
+                    <td>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Valor Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var produto in item.Produtos)
+                                {
+                                    <tr>
+                                        <td>@produto.Produto</td>
+                                        <td>@produto.ValorTotal.ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td>Total Geral</td>
+                <td>
+                    <strong id="totalGeral">0,00</strong>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('gerarDadosBtn').addEventListener('click', function () {
+        var tabela = document.getElementById('tabelaDados');
+        tabela.style.display = 'block';
+
+        var totalGeral = 0; // Inicializa a soma total
+
+        for (var i = 0; i < 100; i++) {
+            var data = new Date();
+            data.setDate(data.getDate() + i);
+
+            var produtos = [];
+
+            for (var j = 0; j < 3; j++) {
+                var valorProduto = Math.random() * 1000;
+                totalGeral += valorProduto; // Adiciona o valor do produto à soma total
+
+                produtos.push({
+                    Produto: 'Produto ' + (j + 1),
+                    ValorTotal: valorProduto.toFixed(2)
+                });
+            }
+
+            var newRow = tabela.getElementsByTagName('tbody')[0].insertRow(-1);
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+
+            cell1.innerHTML = data.toLocaleDateString();
+            cell2.innerHTML = gerarTabelaProdutos(produtos);
+        }
+
+        // Atualiza o valor da soma total no final da tabela
+        document.getElementById('totalGeral').innerText = totalGeral.toFixed(2);
+    });
+
+    function gerarTabelaProdutos(produtos) {
+        var tabelaProdutos = '<table class="table table-bordered"><thead><tr><th>Produto</th><th>Valor Total</th></tr></thead><tbody>';
+
+        for (var i = 0; i < produtos.length; i++) {
+            tabelaProdutos += '<tr><td>' + produtos[i].Produto + '</td><td>' + produtos[i].ValorTotal + '</td></tr>';
+        }
+
+        tabelaProdutos += '</tbody></table>';
+        return tabelaProdutos;
+    }
+</script>
